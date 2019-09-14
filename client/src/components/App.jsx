@@ -81,7 +81,7 @@ class App extends React.Component {
         overallTwoPercentage: 0,
         overallOnePercentage: 0
       }
-    }
+    };
 
     this.filterReviews = this.filterReviews.bind(this);
   }
@@ -97,7 +97,7 @@ class App extends React.Component {
     let noiseQuiet = 0;
     let noiseModerate = 0;
     let noiseEnergetic = 0;
-    let averageNoiseLevel= '';
+    let averageNoiseLevel = '';
     let percentageRecommendationSum = 0;
     let overallFive = 0;
     let overallFour = 0;
@@ -114,7 +114,7 @@ class App extends React.Component {
       sumService += review.service;
       sumValue += review.value;
       percentageRecommendationSum += review.would_recommend;
-      if(review.overall === 5) {
+      if (review.overall === 5) {
         overallFive++;
       } else if (review.overall === 4) {
         overallFour++;
@@ -137,8 +137,8 @@ class App extends React.Component {
       } 
     });
 
-    let reviewSummaryStars = sumOverall/numberOfReviews;
-    let percentageRecommendation = parseInt((percentageRecommendationSum/numberOfReviews)*100);
+    let reviewSummaryStars = sumOverall / numberOfReviews;
+    let percentageRecommendation = parseInt((percentageRecommendationSum / numberOfReviews) * 100);
     let maxNoiseLevel = Math.max(noiseQuiet, noiseModerate, noiseEnergetic);
     if (noiseEnergetic === maxNoiseLevel) {
       averageNoiseLevel = 'Energetic';
@@ -154,37 +154,38 @@ class App extends React.Component {
         numberOfResterauntReviews: numberOfReviews, 
         users: userReviews.length,
         overallRating: reviewSummaryStars,
-        overallFoodRating: (sumFood/numberOfReviews).toFixed(1), 
-        overallServiceRating: (sumService/numberOfReviews).toFixed(1),
-        overallAmbienceRating: (sumAmbience/numberOfReviews).toFixed(1),
-        overallValueRating: (sumValue/numberOfReviews).toFixed(1),
+        overallFoodRating: (sumFood / numberOfReviews).toFixed(1), 
+        overallServiceRating: (sumService / numberOfReviews).toFixed(1),
+        overallAmbienceRating: (sumAmbience / numberOfReviews).toFixed(1),
+        overallValueRating: (sumValue / numberOfReviews).toFixed(1),
         overallNoiseLevel: averageNoiseLevel,
         percentWouldRecommend: percentageRecommendation,
-        overallFivePercentage: Number.parseInt((overallFive/numberOfReviews)*100),
-        overallFourPercentage: Number.parseInt((overallFour/numberOfReviews)*100),
-        overallThreePercentage: Number.parseInt((overallThree/numberOfReviews)*100),
-        overallTwoPercentage: Number.parseInt((overallTwo/numberOfReviews)*100),
-        overallOnePercentage: Number.parseInt((overallOne/numberOfReviews)*100)
+        overallFivePercentage: Number.parseInt((overallFive / numberOfReviews) * 100),
+        overallFourPercentage: Number.parseInt((overallFour / numberOfReviews) * 100),
+        overallThreePercentage: Number.parseInt((overallThree / numberOfReviews) * 100),
+        overallTwoPercentage: Number.parseInt((overallTwo / numberOfReviews) * 100),
+        overallOnePercentage: Number.parseInt((overallOne / numberOfReviews) * 100)
       }
     });
   }
 
   getReviews() {
+    console.log('W:', window.location.pathname);
     let path = window.location.pathname.split('/')[1];
-    if(Number(path.slice(1)) <= 0 || Number(path.slice(1)) > 100) {
+    if (Number(path.slice(1)) <= 0 || Number(path.slice(1)) > 100) {
       path = 'L1';
     }
 
-    axios.get(`http://18.223.151.81:3003/api/${path}/reviews`)
-    .then((response) => {
+    axios.get(`http://localhost:3003/api/reviews/${path}/`)
+      .then((response) => {
       // console.log('response: ', response.data);
-      this.setState({
-        reviews: response.data
-      }, this.filterReviews)
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+        this.setState({
+          reviews: response.data
+        }, this.filterReviews);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   componentDidMount() {
@@ -196,27 +197,27 @@ class App extends React.Component {
       <div>
         <GlobalStyle />
         <ReviewWrapperDiv>
-        {this.state.reviews.length === 0 ? <div></div> : 
-        <div>
-          <ReviewSummary overallSummary={this.state.overallSummaryObj}/>
-          <ReviewList reviews={this.state.reviews} />
-          <ReviewPageDiv>
-          <ReactPaginate
-          previousLabel={'previous'}
-          nextLabel={'next'}
-          breakLabel={'...'}
-          breakClassName={'break-me'}
-          pageCount={this.state.pageCount}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={3}
-          onPageChange={this.handlePageClick}
-          containerClassName={'pagination'}
-          subContainerClassName={'pages pagination'}
-          activeClassName={'active'}
-        />
-         </ReviewPageDiv>
-        </div>
-        }
+          {this.state.reviews.length === 0 ? <div></div> : 
+            <div>
+              <ReviewSummary overallSummary={this.state.overallSummaryObj}/>
+              <ReviewList reviews={this.state.reviews} />
+              <ReviewPageDiv>
+                <ReactPaginate
+                  previousLabel={'previous'}
+                  nextLabel={'next'}
+                  breakLabel={'...'}
+                  breakClassName={'break-me'}
+                  pageCount={this.state.pageCount}
+                  marginPagesDisplayed={1}
+                  pageRangeDisplayed={3}
+                  onPageChange={this.handlePageClick}
+                  containerClassName={'pagination'}
+                  subContainerClassName={'pages pagination'}
+                  activeClassName={'active'}
+                />
+              </ReviewPageDiv>
+            </div>
+          }
         </ReviewWrapperDiv>
       </div>
     );

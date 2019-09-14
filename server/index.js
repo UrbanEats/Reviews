@@ -8,7 +8,8 @@ const compression = require('compression');
 const PORT = 3003;
 
 
-app.use(express.static(path.join(__dirname,  '../public')));
+app.use(express.static(path.join(__dirname, '../public')));
+app.use('/:restaurantName', express.static(path.join(__dirname, '../public')));
 
 app.use(bodyParser.json());
 
@@ -19,7 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/:restaurantName/reviews', (req, res) => {
+app.get('/api/reviews/:restaurantName', (req, res) => {
   let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
 
   db.query(input, (error, results) => {
@@ -29,7 +30,7 @@ app.get('/api/:restaurantName/reviews', (req, res) => {
     } else {
       // console.log('results: ', results);
       // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
-      let joinQuery = `SELECT * FROM Users JOIN Reviews ON Reviews.restaurant_id= '${results[0].id}' AND Reviews.user_id=Users.id;`
+      let joinQuery = `SELECT * FROM Users JOIN Reviews ON Reviews.restaurant_id= '${results[0].id}' AND Reviews.user_id=Users.id;`;
       db.query(joinQuery, (error, results) => {
         if (error) {
           console.log(error);
@@ -37,10 +38,88 @@ app.get('/api/:restaurantName/reviews', (req, res) => {
         } else {
           res.send(results);
         }
-      })
+      });
     }
   });
 });
+
+//Custom API's for CRUD/REST
+
+//POST
+app.post('/api/reviews', (req, res) => {
+  const {userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date} = req.params.restaurantInfo;
+
+  db.query(input, (error, results) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      // console.log('results: ', results);
+      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
+      let joinQuery = 'INSERT INTO reviews (userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      db.query(joinQuery, [userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date], (error, results) => {
+        if (error) {
+          console.log(error);
+          res.send(error);
+        } else {
+          res.send(results);
+        }
+      });
+    }
+  });
+});
+
+//PUT
+app.put('/api/reviews/:restaurantName', (req, res) => {
+  let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
+  const {userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date} = req.params.restaurantInfo;
+
+  db.query(input, (error, results) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      // console.log('results: ', results);
+      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
+      let joinQuery = `UPDATE reviews SET (restaurantInfo = ${restaurantInfo}) WHERE restaurant_id = ${results[0].id}`;
+      db.query(joinQuery, (error, results) => {
+        if (error) {
+          console.log(error);
+          res.send(error);
+        } else {
+          res.send(results);
+        }
+      });
+    }
+  });
+});
+
+//DELETE
+app.delete('/api/reviews/:restaurantName', (req, res) => {
+  let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
+  const {restaurantInfo} = req.params.restaurantInfo;
+
+  db.query(input, (error, results) => {
+    if (error) {
+      console.log(error);
+      res.send(error);
+    } else {
+      // console.log('results: ', results);
+      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
+      let joinQuery = `DELETE FROM reviews WHERE restaurant_id = ${results[0].id}`;
+      db.query(joinQuery, (error, results) => {
+        if (error) {
+          console.log(error);
+          res.send(error);
+        } else {
+          res.send(results);
+        }
+      });
+    }
+  });
+});
+
+
 
 app.listen(PORT, function() {
   console.log(`listening on port ${PORT}`);
