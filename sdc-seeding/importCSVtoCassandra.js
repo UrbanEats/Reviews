@@ -44,7 +44,8 @@ const run = async () => {
       lr.on('line', (line) => {
         linesDone += 1;
         const arr = line.split('|');
-        if (linesDone % 10000 === 0) {
+        if (linesDone % 100000 === 0) {
+          console.log("CUR:",arr[0]);
           console.log(linesDone);
         }
         if (queries >= 2048) {
