@@ -23,102 +23,34 @@ app.use((req, res, next) => {
 app.get('/api/reviews/:restaurantName', (req, res) => {
   let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
 
-  db.query(input, (error, results) => {
-    if (error) {
-      console.log(error);
-      res.send(error);
-    } else {
-      // console.log('results: ', results);
-      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
-      let joinQuery = `SELECT * FROM Users JOIN Reviews ON Reviews.restaurant_id= '${results[0].id}' AND Reviews.user_id=Users.id;`;
-      db.query(joinQuery, (error, results) => {
-        if (error) {
-          console.log(error);
-          res.send(error);
-        } else {
-          res.send(results);
-        }
-      });
-    }
-  });
+
+  const id = req.params.restaurantName;
+
+  db.getReviewsByRestaurantId(id)
+    .then(data => {
+      console.log(data);
+      res.send(data);
+    });
+
+  // db.query(input, (error, results) => {
+  //   if (error) {
+  //     console.log(error);
+  //     res.send(error);
+  //   } else {
+  //     // console.log('results: ', results);
+  //     // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
+  //     let joinQuery = `SELECT * FROM Users JOIN Reviews ON Reviews.restaurant_id= '${results[0].id}' AND Reviews.user_id=Users.id;`;
+  //     db.query(joinQuery, (error, results) => {
+  //       if (error) {
+  //         console.log(error);
+  //         res.send(error);
+  //       } else {
+  //         res.send(results);
+  //       }
+  //     });
+  //   }
+  // });
 });
-
-//Custom API's for CRUD/REST
-
-//POST
-app.post('/api/reviews', (req, res) => {
-  const {userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date} = req.params.restaurantInfo;
-
-  db.query(input, (error, results) => {
-    if (error) {
-      console.log(error);
-      res.send(error);
-    } else {
-      // console.log('results: ', results);
-      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
-      let joinQuery = 'INSERT INTO reviews (userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-      db.query(joinQuery, [userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date], (error, results) => {
-        if (error) {
-          console.log(error);
-          res.send(error);
-        } else {
-          res.send(results);
-        }
-      });
-    }
-  });
-});
-
-//PUT
-app.put('/api/reviews/:restaurantName', (req, res) => {
-  let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
-  const {userId, review, overall, food, service, ambience, value, noise, wouldRecommend, date} = req.params.restaurantInfo;
-
-  db.query(input, (error, results) => {
-    if (error) {
-      console.log(error);
-      res.send(error);
-    } else {
-      // console.log('results: ', results);
-      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
-      let joinQuery = `UPDATE reviews SET (restaurantInfo = ${restaurantInfo}) WHERE restaurant_id = ${results[0].id}`;
-      db.query(joinQuery, (error, results) => {
-        if (error) {
-          console.log(error);
-          res.send(error);
-        } else {
-          res.send(results);
-        }
-      });
-    }
-  });
-});
-
-//DELETE
-app.delete('/api/reviews/:restaurantName', (req, res) => {
-  let input = `SELECT id FROM Restaurants where name='${req.params.restaurantName}';`;
-  const {restaurantInfo} = req.params.restaurantInfo;
-
-  db.query(input, (error, results) => {
-    if (error) {
-      console.log(error);
-      res.send(error);
-    } else {
-      // console.log('results: ', results);
-      // let reviewQuery = `select * from reviews where restaurant_id = '${results[0].id}';`
-      let joinQuery = `DELETE FROM reviews WHERE restaurant_id = ${results[0].id}`;
-      db.query(joinQuery, (error, results) => {
-        if (error) {
-          console.log(error);
-          res.send(error);
-        } else {
-          res.send(results);
-        }
-      });
-    }
-  });
-});
-
 
 
 app.listen(PORT, function() {

@@ -25,5 +25,5 @@ CREATE TABLE reviews (
   value INTEGER,
   noise VARCHAR(32),
   would_recommend BOOLEAN,
-  date DATE
+  date DATE 
 );
