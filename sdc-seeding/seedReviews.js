@@ -1,20 +1,24 @@
 const faker = require('faker');
 const fs = require('fs');
-const writeUsers = fs.createWriteStream('data_reviews.csv');
+const writeUsers = fs.createWriteStream('data_reviews.gz');
+
+var zlib = require('zlib');
+var compress = zlib.createGzip();
+compress.pipe(writeUsers);
 
 
 (async() => {
   let count = 0;
-  for (var i = 1; i < 10000000; i++) {
+  for (var i = 1; i <= 10000000; i++) {
     const reviewCount = Math.ceil(3 + Math.random() * 20);
-    if (i % 100000 === 0) {
+    if (i % 10000 === 0) {
       console.log(i);
     }
     for (var x = 0; x < reviewCount; x++) {
         count++;
         const restaurantId = i;
         const userId = Math.ceil(Math.random() * 10000000);
-        const review = faker.lorem.paragraph().toString();
+        const review = faker.lorem.words().toString();
         const overall = Math.ceil(Math.random() * 5);
         const food = Math.ceil(Math.random() * 5);
         const service = Math.ceil(Math.random() * 5);
@@ -24,11 +28,17 @@ const writeUsers = fs.createWriteStream('data_reviews.csv');
         const wouldRecommend =(Math.random() * 2 > .5 ? false : true);
         const date = faker.date.past(3).toISOString();
 
-        if (!writeUsers.write(`${userId},${restaurantId},"${review}",${overall},${food},${service},${ambience},${value},${noise},${wouldRecommend},${date}\n`)) {
+        if (!compress.write(`${userId},${restaurantId},"${review}",${overall},${food},${service},${ambience},${value},${noise},${wouldRecommend},${date}\n`)) {
           await new Promise(resolve => {
-            writeUsers.once('drain', resolve);
+            compress.once('drain', resolve);
           });
         }
+
+        if (i === 10000000 && x === reviewCount - 1) {
+          compress.end();
+        }
+
+        //console.log(`${userId},${restaurantId},"${review}",${overall},${food},${service},${ambience},${value},${noise},${wouldRecommend},${date}\n`);
     }
   }
 })()

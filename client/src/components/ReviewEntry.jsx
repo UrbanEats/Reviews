@@ -62,7 +62,7 @@ const Username = window.styled.div`
   font-family: 'BrandonTextMedium', 'Josefin Sans', sans-serif;
 `;
 
-const UserLocation= window.styled.div`
+const UserLocation = window.styled.div`
   text-align: center;
   margin: 0 auto;
   margin-top: 5px;
@@ -211,12 +211,12 @@ class ReviewEntry extends React.Component {
   }
 
   render () {
-
+    console.log('COLOR:', this.props.review);
     const InitialsCircle = window.styled.div`
       display: flex;
       justify-content: center;
       position: relative;
-      background-color: ${this.props.review.initials_background};
+      background-color: ${this.props.review.background_color};
       align-items: center;
       height: 48px;
       width: 48px;
@@ -237,19 +237,19 @@ class ReviewEntry extends React.Component {
 
     return (
       <MainDiv> 
-       <FlexDiv>
+        <FlexDiv>
 
          
           <UserDiv>
-          {this.props.review.vip === 1 ? (<div>
-            <InitialsDiv>
-              <UserVIP>VIP</UserVIP>
-              <InitialsCircle>{this.props.review.user_initials}</InitialsCircle>
-            </InitialsDiv>
+            {this.props.review.vip === 1 ? (<div>
+              <InitialsDiv>
+                <UserVIP>VIP</UserVIP>
+                <InitialsCircle>{this.props.review.user_initials}</InitialsCircle>
+              </InitialsDiv>
             </div>) : 
-            (<div>
-              <InitialsCircle>{this.props.review.user_initials}</InitialsCircle>
-            </div>)}
+              (<div>
+                <InitialsCircle>{this.props.review.user_initials}</InitialsCircle>
+              </div>)}
             <Username>{this.props.review.user}</Username>
             <UserLocation>{this.props.review.location}</UserLocation>
             <Username>
@@ -262,7 +262,7 @@ class ReviewEntry extends React.Component {
             <div>
               <span><StarRatings rating={this.props.review.overall} starDimension="16px" starSpacing="1px" starRatedColor='#DA3743'/></span>
               <ReviewDot></ReviewDot>
-              <ReviewDate>{dateDifference <= 1 ? `Dined a day ago` : dateDifference <= 7 ? `Dined ${dateDifference} days ago` : `Dined on ${dateFormat}`}</ReviewDate>
+              <ReviewDate>{dateDifference <= 1 ? 'Dined a day ago' : dateDifference <= 7 ? `Dined ${dateDifference} days ago` : `Dined on ${dateFormat}`}</ReviewDate>
             </div>
 
             <ReviewPropertiesDiv>
@@ -276,38 +276,38 @@ class ReviewEntry extends React.Component {
             </ReviewPropertiesDiv>
             
             {this.props.review.review.length < 200 ? 
-            (<div> 
-              <ReviewStyling>{this.props.review.review}</ReviewStyling> 
-
-              <ReviewReportDivAlternate>
-                <ReviewReportContainer><div><img src={reportIcon} alt="report icon"/>Report</div></ReviewReportContainer>
-              </ReviewReportDivAlternate> 
-            </div>): 
-
-            (<div>
-              {this.state.readMore === false ? 
-              (<div>
-              <ReviewStylingOverflow>{this.props.review.review}</ReviewStylingOverflow> 
-
-              <ReviewReportDiv>
-                <ReviewReadMore onClick={(e)=> this.handleReadMoreExpand(e)}>+ Read more</ReviewReadMore>
-                <ReviewReportContainer><div><img src={reportIcon} alt="report icon"/>Report</div></ReviewReportContainer>
-              </ReviewReportDiv> 
-              </div>) :
-              (<div>
+              (<div> 
                 <ReviewStyling>{this.props.review.review}</ReviewStyling> 
 
-                <ReviewReportDiv>
-                  <ReviewReadMore onClick={(e)=> this.handleReadMoreExpand(e)}>- Read less</ReviewReadMore>
+                <ReviewReportDivAlternate>
                   <ReviewReportContainer><div><img src={reportIcon} alt="report icon"/>Report</div></ReviewReportContainer>
-                </ReviewReportDiv> 
-              </div>)} 
-            </div>)}    
+                </ReviewReportDivAlternate> 
+              </div>) : 
+
+              (<div>
+                {this.state.readMore === false ? 
+                  (<div>
+                    <ReviewStylingOverflow>{this.props.review.review}</ReviewStylingOverflow> 
+
+                    <ReviewReportDiv>
+                      <ReviewReadMore onClick={(e)=> this.handleReadMoreExpand(e)}>+ Read more</ReviewReadMore>
+                      <ReviewReportContainer><div><img src={reportIcon} alt="report icon"/>Report</div></ReviewReportContainer>
+                    </ReviewReportDiv> 
+                  </div>) :
+                  (<div>
+                    <ReviewStyling>{this.props.review.review}</ReviewStyling> 
+
+                    <ReviewReportDiv>
+                      <ReviewReadMore onClick={(e)=> this.handleReadMoreExpand(e)}>- Read less</ReviewReadMore>
+                      <ReviewReportContainer><div><img src={reportIcon} alt="report icon"/>Report</div></ReviewReportContainer>
+                    </ReviewReportDiv> 
+                  </div>)} 
+              </div>)}    
           </ReviewDiv>
 
         </FlexDiv>
       </MainDiv>
-    )
+    );
   }
 }
 

@@ -170,11 +170,15 @@ class App extends React.Component {
   }
 
   getReviews() {
-    console.log('W:', window.location.pathname);
     let path = window.location.pathname.split('/')[1];
-    if (Number(path.slice(1)) <= 0 || Number(path.slice(1)) > 9999999) {
-      path = 'L1';
+    if (!path) {
+      path = '1';
     }
+    console.log('W:', path);
+    // console.log('P:', path.slice(1));
+    // if (Number(path.slice(1)) <= 0 || Number(path.slice(1)) > 9999999) {
+    //   path = 'L1';
+    // }
 
     axios.get(`http://localhost:3003/api/reviews/${path}/`)
       .then((response) => {
